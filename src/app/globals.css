@@ -126,7 +126,7 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground; 
+    @apply bg-background text-foreground;
   }
   main {
     @apply flex flex-col gap-8 bg-background h-full w-full mx-auto pt-10 px-20 lg:px-32 max-sm:px-4;
