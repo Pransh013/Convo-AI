@@ -54,3 +54,13 @@ export const recentSessions = [
     color: "bg-emerald-200",
   },
 ];
+
+export const subjects = [
+  "mathematics",
+  "science",
+  "history",
+  "literature",
+  "computer science",
+  "physics",
+  "economics",
+];
