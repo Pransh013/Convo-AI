@@ -22,8 +22,12 @@ import {
 import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
 import { companionFormSchema, CompanionFormValues } from "@/schemas";
+import { createCompanion } from "@/lib/actions/companion.actions";
+import { useRouter } from "next/navigation";
 
 const CompanionForm = () => {
+  const router = useRouter();
+
   const form = useForm<CompanionFormValues>({
     resolver: zodResolver(companionFormSchema),
     defaultValues: {
@@ -36,8 +40,12 @@ const CompanionForm = () => {
     },
   });
 
-  function onSubmit(values: CompanionFormValues) {
-    console.log(values);
+  async function onSubmit(values: CompanionFormValues) {
+    const companion = await createCompanion(values);
+    console.log(companion);
+
+    if (companion) router.push(`/companions/${companion.id}`);
+    else router.push("/");
   }
 
   return (

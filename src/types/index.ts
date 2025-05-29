@@ -1,4 +1,4 @@
-export type CompanionCardProps = {
+export type CompanionType = {
   id: string;
   name: string;
   topic: string;
@@ -7,13 +7,16 @@ export type CompanionCardProps = {
   color: string;
 };
 
-type CompanionType = {
+export type CompanionRecord = {
   id: string;
-  subject: string;
   name: string;
+  style: string;
+  subject: string;
+  voice: string;
   topic: string;
   duration: number;
-  color: string;
+  author: string;
+  created_at: string;
 };
 
 export type CompanionListProps = {

@@ -1,4 +1,4 @@
-import { CompanionCardProps } from "@/types";
+import { CompanionType } from "@/types";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +12,7 @@ const CompanionCard = ({
   subject,
   duration,
   color,
-}: CompanionCardProps) => {
+}: CompanionType) => {
   return (
     <article className={cn("companion-card", color)}>
       <div className="flex justify-between items-center">
