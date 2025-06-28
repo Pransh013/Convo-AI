@@ -1,9 +1,12 @@
 "use server";
 
-import { CompanionFormValues } from "@/schemas";
 import { createSupabaseClient } from "../supabase";
 import { getCurrentUser } from "../clerk";
-import { CompanionRecord } from "@/types";
+import {
+  CompanionFormValues,
+  CompanionRecord,
+  GetAllCompanions,
+} from "@/types";
 
 export const createCompanion = async (
   formData: CompanionFormValues
@@ -20,4 +23,29 @@ export const createCompanion = async (
     throw new Error(error.message || "Failed to create a companion");
   }
   return data[0];
+};
+
+export const getAllCompanions = async ({
+  subject,
+  topic,
+  limit = 10,
+  page = 1,
+}: GetAllCompanions): Promise<CompanionRecord[]> => {
+  const supabase = createSupabaseClient();
+
+  let query = supabase.from("companions").select();
+  if (subject && topic) {
+    query = query
+      .ilike("subject", `%${subject}%`)
+      .or(`topic.ilike.%${topic}%,name.ilike.%${topic}%`);
+  } else if (subject) {
+    query = query.ilike("subject", `%${subject}%`);
+  } else if (topic) {
+    query = query.or(`topic.ilike.%${topic}%,name.ilike.%${topic}%`);
+  }
+  query = query.range((page - 1) * limit, page * limit - 1);
+
+  const { data: companions, error } = await query;
+  if (error) throw new Error(error.message);
+  return companions;
 };

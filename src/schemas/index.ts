@@ -8,5 +8,3 @@ export const companionFormSchema = z.object({
   style: z.string().min(1, { message: "Style is required." }),
   duration: z.coerce.number().min(1, { message: "Duration is required." }),
 });
-
-export type CompanionFormValues = z.infer<typeof companionFormSchema>;

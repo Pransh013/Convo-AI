@@ -63,4 +63,18 @@ export const subjects = [
   "computer science",
   "physics",
   "economics",
+  "language",
+  "coding",
 ];
+
+export const subjectsColors = {
+  science: "bg-purple-200",
+  mathematics: "bg-yellow-200",
+  language: "bg-sky-200",
+  coding: "bg-pink-200",
+  history: "bg-amber-200",
+  economics: "bg-emerald-200",
+  "computer science": "bg-rose-200",
+  physics: "bg-cyan-200",
+  literature: "bg-orange-200",
+};

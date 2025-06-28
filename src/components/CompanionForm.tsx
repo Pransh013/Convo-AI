@@ -21,9 +21,10 @@ import {
 } from "@/components/ui/select";
 import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
-import { companionFormSchema, CompanionFormValues } from "@/schemas";
+import { companionFormSchema } from "@/schemas";
 import { createCompanion } from "@/lib/actions/companion.actions";
 import { useRouter } from "next/navigation";
+import { CompanionFormValues } from "@/types";
 
 const CompanionForm = () => {
   const router = useRouter();

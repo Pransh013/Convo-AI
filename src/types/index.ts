@@ -1,3 +1,8 @@
+import { companionFormSchema } from "@/schemas";
+import { z } from "zod";
+
+export type CompanionFormValues = z.infer<typeof companionFormSchema>;
+
 export type CompanionType = {
   id: string;
   name: string;
@@ -23,4 +28,15 @@ export type CompanionListProps = {
   title: string;
   companions: CompanionType[];
   className?: string;
+};
+
+export type GetAllCompanions = {
+  subject?: string | string[];
+  topic?: string | string[];
+  limit?: number;
+  page?: number;
+};
+
+export type SearchParams = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
