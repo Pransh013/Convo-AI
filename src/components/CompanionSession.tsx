@@ -2,14 +2,18 @@
 
 import { cn, configureAssistant, getSubjectColor } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
-import { CallStatus, CompanionSessionData } from "@/types";
+import {
+  CallStatus,
+  CompanionSessionData,
+  Message,
+  SavedMessage,
+} from "@/types";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import soundwaves from "@/constants/soundwaves.json";
 import { Button } from "./ui/button";
 import { Mic, MicOff } from "lucide-react";
-import { AssistantOverrides } from "@vapi-ai/web/dist/api";
 
 const CompanionSession = ({
   id,
@@ -24,6 +28,7 @@ const CompanionSession = ({
   const [callStatus, setCallStatus] = useState(CallStatus.INACTIVE);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [messages, setMessages] = useState<SavedMessage[]>([]);
 
   const lottieRef = useRef<LottieRefCurrentProps>(null);
 
@@ -48,7 +53,12 @@ const CompanionSession = ({
       setCallStatus(CallStatus.FINISHED);
     };
 
-    const onMessage = () => {};
+    const onMessage = (message: Message) => {
+      if (message.type === "transcript" && message.transcriptType === "final") {
+        const newMessage = { role: message.role, content: message.transcript };
+        setMessages((prev) => [newMessage, ...prev]);
+      }
+    };
 
     const onSpeechStart = () => setIsSpeaking(true);
     const onSpeechEnd = () => setIsSpeaking(false);
@@ -78,16 +88,17 @@ const CompanionSession = ({
     setIsMuted(!currentMutedState);
   };
 
-  const handleConnect = async () => {
+  const handleConnect = () => {
     setCallStatus(CallStatus.CONNECTING);
 
     try {
-      const assistantOverrides: AssistantOverrides = {
+      const assistantOverrides = {
         variableValues: { subject, topic, style },
-        clientMessages: [],
+        clientMessages: ["transcript"],
         serverMessages: [],
       };
 
+      //@ts-expect-error
       vapi.start(configureAssistant(voice, style), assistantOverrides);
     } catch (error) {
       console.error("Failed to start VAPI call:", error);
@@ -189,6 +200,26 @@ const CompanionSession = ({
             </Button>
           </div>
         </div>
+      </section>
+
+      <section className="transcript">
+        <div className="transcript-message no-scrollbar">
+          {messages.map((message, index) => (
+            <p
+              key={index}
+              className={cn(
+                "max-sm:text-sm",
+                message.role !== "assistant" && "text-primary"
+              )}
+            >
+              {message.role === "assistant"
+                ? `${name.split(" ")[0].replace(/[.,]/g, ", ")}: `
+                : `${userName}: `}
+              {message.content}
+            </p>
+          ))}
+        </div>
+        <div className="transcript-fade" />
       </section>
     </section>
   );
