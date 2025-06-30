@@ -43,8 +43,6 @@ const CompanionForm = () => {
 
   async function onSubmit(values: CompanionFormValues) {
     const companion = await createCompanion(values);
-    console.log(companion);
-
     if (companion) router.push(`/companions/${companion.id}`);
     else router.push("/");
   }

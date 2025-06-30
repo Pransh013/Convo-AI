@@ -22,7 +22,7 @@ export const createCompanion = async (
   if (!data || error) {
     throw new Error(error.message || "Failed to create a companion");
   }
-  return data[0];
+  return data[0] as CompanionRecord;
 };
 
 export const getAllCompanions = async ({
@@ -47,5 +47,18 @@ export const getAllCompanions = async ({
 
   const { data: companions, error } = await query;
   if (error) throw new Error(error.message);
-  return companions;
+  return companions as CompanionRecord[];
+};
+
+export const getCompanion = async (id: string): Promise<CompanionRecord> => {
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("companions")
+    .select()
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  return data[0] as CompanionRecord;
 };

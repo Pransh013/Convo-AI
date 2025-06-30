@@ -8,7 +8,7 @@ import { SearchParams } from "@/types";
 export default async function CompanionsPage({ searchParams }: SearchParams) {
   const filters = await searchParams;
   const subject = filters.subject ?? "";
-  const topic = filters.topic ?? "";
+  const topic = filters.topic ?? "";  
 
   const companions = await getAllCompanions({ subject, topic });
 

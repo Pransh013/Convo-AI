@@ -40,3 +40,25 @@ export type GetAllCompanions = {
 export type SearchParams = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
+
+export type CompanionSessionProps = {
+  params: Promise<{ id: string }>;
+};
+
+export type CompanionSessionData = {
+  id: string;
+  name: string;
+  subject: string;
+  topic: string;
+  style: string;
+  voice: string;
+  userName: string;
+  userImage: string;
+};
+
+export enum CallStatus {
+  INACTIVE = "INACTIVE",
+  CONNECTING = "CONNECTING",
+  ACTIVE = "ACTIVE",
+  FINISHED = "FINISHED",
+}
