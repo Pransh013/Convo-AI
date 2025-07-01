@@ -14,9 +14,10 @@ import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import soundwaves from "@/constants/soundwaves.json";
 import { Button } from "./ui/button";
 import { Mic, MicOff } from "lucide-react";
+import { addToSessionHistory } from "@/lib/actions/companion.actions";
 
 const CompanionSession = ({
-  id,
+  id: companionId,
   name,
   subject,
   topic,
@@ -43,14 +44,11 @@ const CompanionSession = ({
   }, [isSpeaking, lottieRef]);
 
   useEffect(() => {
-    const onCallStart = () => {
-      console.log("Call started");
-      setCallStatus(CallStatus.ACTIVE);
-    };
+    const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
 
     const onCallEnd = () => {
-      console.log("Call ended");
       setCallStatus(CallStatus.FINISHED);
+      addToSessionHistory(companionId);
     };
 
     const onMessage = (message: Message) => {

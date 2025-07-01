@@ -1,5 +1,5 @@
 import { CompanionType } from "@/types";
-import { cn } from "@/lib/utils";
+import { cn, getSubjectColor } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -11,10 +11,9 @@ const CompanionCard = ({
   topic,
   subject,
   duration,
-  color,
 }: CompanionType) => {
   return (
-    <article className={cn("companion-card", color)}>
+    <article className={cn("companion-card", getSubjectColor(subject))}>
       <div className="flex justify-between items-center">
         <Badge className="capitalize">{subject}</Badge>
         <Button className="rounded-full" size="icon">

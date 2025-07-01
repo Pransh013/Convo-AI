@@ -7,24 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
+import { cn, getSubjectColor } from "@/lib/utils";
 import { CompanionListProps } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 
-const CompanionsList = ({
-  title,
-  companions,
-  className,
-}: CompanionListProps) => {
+const CompanionsList = ({ title, companions }: CompanionListProps) => {
   return (
-    <article
-      className={cn(
-        "rounded-3xl border border-black px-7 pt-7 pb-10 w-2/3 max-lg:w-full bg-white",
-        className
-      )}
-    >
+    <article className="rounded-3xl border border-black px-7 pt-7 pb-10 w-2/3 max-lg:w-full bg-white">
       <Table>
         <TableCaption>A list of your {title} sessions.</TableCaption>
         <TableHeader>
@@ -36,14 +27,14 @@ const CompanionsList = ({
         </TableHeader>
         <TableBody>
           {companions.map((companion) => (
-            <TableRow key={companion.id}>
+            <TableRow key={`${companion.id}-${Date.now()}`}>
               <TableCell className="font-medium">
                 <Link href={`/companions/${companion.id}`}>
                   <div className="flex items-center gap-2">
                     <div
                       className={cn(
                         "flex items-center justify-center size-16 rounded-lg max-md:hidden",
-                        companion.color
+                        getSubjectColor(companion.subject)
                       )}
                     >
                       <Image
@@ -67,7 +58,7 @@ const CompanionsList = ({
                 <div
                   className={cn(
                     "flex items-center justify-center rounded-lg w-fit md:hidden",
-                    companion.color
+                    getSubjectColor(companion.subject)
                   )}
                 >
                   <Image

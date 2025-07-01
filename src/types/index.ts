@@ -9,7 +9,6 @@ export type CompanionType = {
   topic: string;
   subject: string;
   duration: number;
-  color: string;
 };
 
 export type CompanionRecord = {
@@ -27,7 +26,6 @@ export type CompanionRecord = {
 export type CompanionListProps = {
   title: string;
   companions: CompanionType[];
-  className?: string;
 };
 
 export type GetAllCompanions = {

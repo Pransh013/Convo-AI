@@ -62,3 +62,50 @@ export const getCompanion = async (id: string): Promise<CompanionRecord> => {
 
   return data[0] as CompanionRecord;
 };
+
+export const addToSessionHistory = async (companionId: string) => {
+  const { userId } = await getCurrentUser();
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase.from("session_history").insert({
+    companion_id: companionId,
+    user_id: userId,
+  });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const getRecentSessions = async (
+  limit = 10
+): Promise<CompanionRecord[]> => {
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("session_history")
+    .select(`companions:companion_id (*)`)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data.map(
+    ({ companions }) => companions
+  ) as unknown as CompanionRecord[];
+};
+
+export const getUserSessions = async (limit = 10) => {
+  const { userId } = await getCurrentUser();
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("session_history")
+    .select(`companions:companion_id (*)`)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+
+  return data.map(({ companions }) => companions);
+};
