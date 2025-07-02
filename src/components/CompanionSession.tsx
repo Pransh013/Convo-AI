@@ -61,7 +61,7 @@ const CompanionSession = ({
     const onSpeechStart = () => setIsSpeaking(true);
     const onSpeechEnd = () => setIsSpeaking(false);
 
-    const onError = (error: any) => console.error("VAPI Error:", error);
+    const onError = (error: unknown) => console.error("VAPI Error:", error);
 
     vapi.on("call-start", onCallStart);
     vapi.on("call-end", onCallEnd);

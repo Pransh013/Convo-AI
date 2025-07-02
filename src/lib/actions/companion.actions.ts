@@ -99,18 +99,39 @@ export const getRecentSessions = async (
   })) as unknown as SessionHistoryRecord[];
 };
 
-export const getUserSessions = async (limit = 10) => {
-  const { userId } = await getCurrentUser();
+export const getUserSessions = async (
+  userId: string,
+  limit = 10
+): Promise<SessionHistoryRecord[]> => {
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
     .from("session_history")
-    .select(`companions:companion_id (*)`)
+    .select(`id, companions:companion_id (*)`)
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error) throw new Error(error.message);
 
-  return data.map(({ companions }) => companions);
+  return data.map(({ id, companions }) => ({
+    sessionId: id,
+    companion: companions,
+  })) as unknown as SessionHistoryRecord[];
+};
+
+export const getUserCompanions = async (
+  userId: string
+): Promise<CompanionRecord[]> => {
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("companions")
+    .select()
+    .eq("author", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return data as CompanionRecord[];
 };

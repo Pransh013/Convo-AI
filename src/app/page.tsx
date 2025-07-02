@@ -20,7 +20,11 @@ export default async function HomePage() {
       </section>
 
       <section className="home-section">
-        <RecentSessions sessions={recentSessions} />
+        <RecentSessions
+          sessions={recentSessions}
+          title="recently completed"
+          className="w-2/3 max-lg:w-full"
+        />
         <CreateCompanion />
       </section>
     </main>
