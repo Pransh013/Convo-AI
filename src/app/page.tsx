@@ -1,5 +1,5 @@
 import CompanionCard from "@/components/CompanionCard";
-import CompanionsList from "@/components/CompanionsList";
+import RecentSessions from "@/components/RecentSessionsList";
 import CreateCompanion from "@/components/CreateCompanion";
 import {
   getAllCompanions,
@@ -20,10 +20,7 @@ export default async function HomePage() {
       </section>
 
       <section className="home-section">
-        <CompanionsList
-          title="recently completed"
-          companions={recentSessions}
-        />
+        <RecentSessions sessions={recentSessions} />
         <CreateCompanion />
       </section>
     </main>

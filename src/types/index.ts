@@ -23,9 +23,9 @@ export type CompanionRecord = {
   created_at: string;
 };
 
-export type CompanionListProps = {
-  title: string;
-  companions: CompanionType[];
+export type SessionHistoryRecord = {
+  sessionId: string;
+  companion: CompanionRecord;
 };
 
 export type GetAllCompanions = {

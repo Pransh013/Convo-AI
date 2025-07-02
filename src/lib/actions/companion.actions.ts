@@ -6,6 +6,7 @@ import {
   CompanionFormValues,
   CompanionRecord,
   GetAllCompanions,
+  SessionHistoryRecord,
 } from "@/types";
 
 export const createCompanion = async (
@@ -46,7 +47,9 @@ export const getAllCompanions = async ({
   query = query.range((page - 1) * limit, page * limit - 1);
 
   const { data: companions, error } = await query;
+
   if (error) throw new Error(error.message);
+
   return companions as CompanionRecord[];
 };
 
@@ -79,19 +82,21 @@ export const addToSessionHistory = async (companionId: string) => {
 
 export const getRecentSessions = async (
   limit = 10
-): Promise<CompanionRecord[]> => {
+): Promise<SessionHistoryRecord[]> => {
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
     .from("session_history")
-    .select(`companions:companion_id (*)`)
+    .select(`id, companions:companion_id (*)`)
     .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error) throw new Error(error.message);
-  return data.map(
-    ({ companions }) => companions
-  ) as unknown as CompanionRecord[];
+
+  return data.map(({ id, companions }) => ({
+    sessionId: id,
+    companion: companions,
+  })) as unknown as SessionHistoryRecord[];
 };
 
 export const getUserSessions = async (limit = 10) => {

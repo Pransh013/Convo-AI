@@ -8,16 +8,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn, getSubjectColor } from "@/lib/utils";
-import { CompanionListProps } from "@/types";
+import { SessionHistoryRecord } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 
-const CompanionsList = ({ title, companions }: CompanionListProps) => {
+const RecentSessions = ({ sessions }: { sessions: SessionHistoryRecord[] }) => {
   return (
     <article className="rounded-3xl border border-black px-7 pt-7 pb-10 w-2/3 max-lg:w-full bg-white">
       <Table>
-        <TableCaption>A list of your {title} sessions.</TableCaption>
+        <TableCaption>A list of your recently completed sessions.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-2/3 text-lg">Lessons</TableHead>
@@ -26,8 +26,8 @@ const CompanionsList = ({ title, companions }: CompanionListProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {companions.map((companion) => (
-            <TableRow key={`${companion.id}-${Date.now()}`}>
+          {sessions.map(({ companion, sessionId }) => (
+            <TableRow key={sessionId}>
               <TableCell className="font-medium">
                 <Link href={`/companions/${companion.id}`}>
                   <div className="flex items-center gap-2">
@@ -80,4 +80,4 @@ const CompanionsList = ({ title, companions }: CompanionListProps) => {
   );
 };
 
-export default CompanionsList;
+export default RecentSessions;
