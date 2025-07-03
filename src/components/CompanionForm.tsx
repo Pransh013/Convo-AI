@@ -80,7 +80,7 @@ const CompanionForm = () => {
                   value={field.value}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger className="input capitalize">
+                  <SelectTrigger className="input capitalize px-3">
                     <SelectValue placeholder="Select a subject" />
                   </SelectTrigger>
                   <SelectContent>
@@ -131,7 +131,7 @@ const CompanionForm = () => {
                   defaultValue={field.value}
                   value={field.value}
                 >
-                  <SelectTrigger className="input capitalize">
+                  <SelectTrigger className="input capitalize px-3">
                     <SelectValue placeholder="Select a voice" />
                   </SelectTrigger>
                   <SelectContent>
@@ -164,7 +164,7 @@ const CompanionForm = () => {
                   defaultValue={field.value}
                   value={field.value}
                 >
-                  <SelectTrigger className="input capitalize">
+                  <SelectTrigger className="input capitalize px-3">
                     <SelectValue placeholder="Select a style" />
                   </SelectTrigger>
                   <SelectContent>
