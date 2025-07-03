@@ -5,9 +5,12 @@ import { getCurrentUser } from "../clerk";
 import {
   CompanionFormValues,
   CompanionRecord,
+  CompanionWithBookmark,
   GetAllCompanions,
+  RawCompanionWithBookmarks,
   SessionHistoryRecord,
 } from "@/types";
+import { revalidatePath } from "next/cache";
 
 export const createCompanion = async (
   formData: CompanionFormValues
@@ -31,10 +34,15 @@ export const getAllCompanions = async ({
   topic,
   limit = 10,
   page = 1,
-}: GetAllCompanions): Promise<CompanionRecord[]> => {
+}: GetAllCompanions): Promise<CompanionWithBookmark[]> => {
+  const { userId } = await getCurrentUser();
   const supabase = createSupabaseClient();
 
-  let query = supabase.from("companions").select();
+  let query = supabase
+    .from("companions")
+    .select("*, bookmarks(user_id)")
+    .order("created_at", { ascending: false });
+
   if (subject && topic) {
     query = query
       .ilike("subject", `%${subject}%`)
@@ -46,11 +54,24 @@ export const getAllCompanions = async ({
   }
   query = query.range((page - 1) * limit, page * limit - 1);
 
-  const { data: companions, error } = await query;
+  const { data, error } = await query;
 
   if (error) throw new Error(error.message);
-
-  return companions as CompanionRecord[];
+  
+  const companions = (data as RawCompanionWithBookmarks[]).map((companion) => ({
+    id: companion.id,
+    name: companion.name,
+    style: companion.style,
+    subject: companion.subject,
+    voice: companion.voice,
+    topic: companion.topic,
+    duration: companion.duration,
+    author: companion.author,
+    created_at: companion.created_at,
+    isBookmarked:
+      companion.bookmarks?.some((b) => b.user_id === userId) || false,
+  }));
+  return companions as CompanionWithBookmark[];
 };
 
 export const getCompanion = async (id: string): Promise<CompanionRecord> => {
@@ -134,4 +155,51 @@ export const getUserCompanions = async (
   if (error) throw new Error(error.message);
 
   return data as CompanionRecord[];
+};
+
+export const addBookmark = async (
+  companionId: string,
+  pathname: string
+): Promise<void> => {
+  const { userId } = await getCurrentUser();
+  const supabase = createSupabaseClient();
+
+  const { error } = await supabase.from("bookmarks").insert({
+    companion_id: companionId,
+    user_id: userId,
+  });
+
+  if (error) throw new Error(error.message);
+  revalidatePath(pathname);
+};
+
+export const removeBookmark = async (
+  companionId: string,
+  pathname: string
+): Promise<void> => {
+  const { userId } = await getCurrentUser();
+  const supabase = createSupabaseClient();
+
+  const { error } = await supabase
+    .from("bookmarks")
+    .delete()
+    .eq("user_id", userId)
+    .eq("companion_id", companionId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath(pathname);
+};
+
+export const getBookmarkedCompanions = async (
+  userId: string
+): Promise<CompanionRecord[]> => {
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("bookmarks")
+    .select(`companions:companion_id (*)`)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+  return data.map(({ companions }) => companions as unknown as CompanionRecord);
 };

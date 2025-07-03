@@ -9,6 +9,7 @@ export type CompanionType = {
   topic: string;
   subject: string;
   duration: number;
+  isBookmarked?: boolean;
 };
 
 export type CompanionRecord = {
@@ -22,6 +23,12 @@ export type CompanionRecord = {
   author: string;
   created_at: string;
 };
+
+export type RawCompanionWithBookmarks = CompanionRecord & {
+  bookmarks?: { user_id: string }[];
+};
+
+export type CompanionWithBookmark = CompanionRecord & { isBookmarked: boolean };
 
 export type SessionHistoryRecord = {
   sessionId: string;

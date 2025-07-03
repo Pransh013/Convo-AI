@@ -13,11 +13,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 
-const CompanionList = ({ companions }: { companions: CompanionRecord[] }) => {
+const CompanionList = ({
+  companions,
+  title,
+}: {
+  companions: CompanionRecord[];
+  title?: string;
+}) => {
   return (
     <article className="rounded-3xl border border-black px-7 pt-7 pb-10 w-full bg-white">
       <Table>
-        <TableCaption>A list of all your companions.</TableCaption>
+        <TableCaption>A list of {title} companions.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-2/3 text-lg">Lessons</TableHead>
