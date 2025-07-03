@@ -1,7 +1,6 @@
 "use server";
 
 import { createSupabaseClient } from "../supabase";
-import { getCurrentUser } from "../clerk";
 import {
   CompanionFormValues,
   CompanionRecord,
@@ -11,11 +10,13 @@ import {
   SessionHistoryRecord,
 } from "@/types";
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
 
 export const createCompanion = async (
   formData: CompanionFormValues
 ): Promise<CompanionRecord> => {
-  const { userId } = await getCurrentUser();
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) redirectToSignIn();
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
@@ -35,7 +36,8 @@ export const getAllCompanions = async ({
   limit = 10,
   page = 1,
 }: GetAllCompanions): Promise<CompanionWithBookmark[]> => {
-  const { userId } = await getCurrentUser();
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) redirectToSignIn();
   const supabase = createSupabaseClient();
 
   let query = supabase
@@ -57,7 +59,7 @@ export const getAllCompanions = async ({
   const { data, error } = await query;
 
   if (error) throw new Error(error.message);
-  
+
   const companions = (data as RawCompanionWithBookmarks[]).map((companion) => ({
     id: companion.id,
     name: companion.name,
@@ -88,7 +90,8 @@ export const getCompanion = async (id: string): Promise<CompanionRecord> => {
 };
 
 export const addToSessionHistory = async (companionId: string) => {
-  const { userId } = await getCurrentUser();
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) redirectToSignIn();
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase.from("session_history").insert({
@@ -161,7 +164,8 @@ export const addBookmark = async (
   companionId: string,
   pathname: string
 ): Promise<void> => {
-  const { userId } = await getCurrentUser();
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) redirectToSignIn();
   const supabase = createSupabaseClient();
 
   const { error } = await supabase.from("bookmarks").insert({
@@ -177,7 +181,8 @@ export const removeBookmark = async (
   companionId: string,
   pathname: string
 ): Promise<void> => {
-  const { userId } = await getCurrentUser();
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) redirectToSignIn();
   const supabase = createSupabaseClient();
 
   const { error } = await supabase
@@ -202,4 +207,31 @@ export const getBookmarkedCompanions = async (
 
   if (error) throw new Error(error.message);
   return data.map(({ companions }) => companions as unknown as CompanionRecord);
+};
+
+export const newCompanionPermissions = async () => {
+  const { userId, redirectToSignIn, has } = await auth();
+  if (!userId) redirectToSignIn();
+  const supabase = createSupabaseClient();
+
+  let limit = 0;
+
+  if (has({ plan: "pro" })) {
+    return true;
+  } else if (has({ feature: "3_active_companions" })) {
+    limit = 3;
+  } else if (has({ feature: "10_active_companions" })) {
+    limit = 10;
+  }
+
+  const { data, error } = await supabase
+    .from("companions")
+    .select("id", { count: "exact" })
+    .eq("author", userId);
+
+  if (error) throw new Error(error.message);
+
+  const companionCount = data.length;
+  if (companionCount >= limit) return false;
+  return true;
 };
