@@ -1,4 +1,5 @@
 import CompanionForm from "@/components/CompanionForm";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { newCompanionPermissions } from "@/lib/actions/companion.actions";
 import { auth } from "@clerk/nextjs/server";
@@ -26,13 +27,15 @@ export default async function NewCompanionPage() {
             width={360}
             height={230}
           />
-          <div className="cta-badge">Upgrade your plan</div>
+          <Badge className="bg-cta-gold text-black text-sm">
+            Upgrade your plan
+          </Badge>
           <h1>You’ve Reached Your Limit</h1>
           <p>
             You’ve reached your companion limit. Upgrade to create more
             companions and premium features.
           </p>
-          <Button asChild>
+          <Button asChild className="bg-chart-1">
             <Link href="/subscription">Upgrade My Plan</Link>
           </Button>
         </article>
